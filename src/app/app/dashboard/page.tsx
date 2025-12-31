@@ -8,7 +8,9 @@ import { useUser, useClerk } from '@clerk/nextjs';
 import { Container, AnimatedMicrophone, Card, ErrorBoundary } from '@/components';
 import { useVoiceCoach } from '@/hooks/useVoiceCoach';
 
-export default function DashboardPage() {
+const CLERK_ENABLED = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
+function DashboardWithClerk() {
   const router = useRouter();
   const { user } = useUser();
   const { signOut } = useClerk();
@@ -314,4 +316,25 @@ export default function DashboardPage() {
       </Container>
     </ErrorBoundary>
   );
+}
+
+export default function DashboardPage() {
+  if (!CLERK_ENABLED) {
+    return (
+      <Container gradient="subtle" ambientVariant="stars" className="relative overflow-hidden">
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
+          <div className="max-w-md text-center space-y-3">
+            <h1 className="text-2xl font-bold text-white">Configuration required</h1>
+            <p className="text-sm text-gray-300">
+              This deployment is missing Clerk environment variables, so the dashboard is disabled.
+              Add <span className="text-white">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</span> and{' '}
+              <span className="text-white">CLERK_SECRET_KEY</span> in Vercel to enable it.
+            </p>
+          </div>
+        </div>
+      </Container>
+    );
+  }
+
+  return <DashboardWithClerk />;
 }
