@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Voice Learning Coach: Your AI-Powered Speaking Partner
 
-## Getting Started
+## Inspiration
+As a computer security student balancing multiple languages (English, Arabic, French, and Russian), I’ve experienced firsthand the frustration of practicing pronunciation alone. Apps give you text exercises, but real fluency comes from conversation—and finding a patient speaking partner at 2 AM is impossible.
 
-First, run the development server:
+Late-night Duolingo streaks helped with vocabulary, but I couldn’t practice speaking. Traditional language apps are one-sided; tutors are expensive; and peer practice requires coordination. We asked: What if your AI coach could actually talk to you?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+That’s when ElevenLabs + Google AI clicked: combine human-like voice with intelligent responses to create an always-available conversation partner.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What it does
+Voice Learning Coach transforms language practice through natural conversation:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Voice-first interface: click-to-record and get a spoken response.
+- Intelligent responses: Google Gemini generates supportive coaching and corrections.
+- Realistic voice: ElevenLabs generates human-quality speech.
+- Corrections and polish: gentle feedback to improve clarity and confidence.
+- Context awareness: keeps a session history so the conversation stays coherent.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How we built it
+- Frontend: Next.js (App Router), TypeScript, Tailwind CSS, Framer Motion, Lucide.
+- Voice processing: ElevenLabs Speech-to-Text + Text-to-Speech.
+- AI intelligence: Google Gemini (via `@google/generative-ai`).
+- Authentication: Clerk for secure user sessions.
+- Audio handling: browser MediaRecorder + base64 audio playback.
 
-## Learn More
+Architecture:
+User Speech → ElevenLabs STT → Gemini (context + corrections) → ElevenLabs TTS → User hears response
 
-To learn more about Next.js, take a look at the following resources:
+Core routes:
+- `/api/speech-to-text`
+- `/api/ai-coach`
+- `/api/text-to-speech`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Challenges we ran into
+- Real-time voice orchestration (STT → AI → TTS) without breaking UX.
+- Audio format compatibility (browser WebM vs API expectations).
+- Getting consistent structured outputs from the model.
+- Staying inside free-tier limits while keeping responses useful.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Accomplishments
+- Shipped a full voice AI pipeline: recording → transcription → intelligence → voice synthesis.
+- Polished UX with animated mic + waveform feedback.
+- Production-ready auth and protected routes.
 
-## Deploy on Vercel
+## What we learned
+- Voice AI pipeline architecture (STT → NLP → TTS)
+- Async orchestration + error handling
+- Audio blob handling and API compatibility
+- Prompt design for coaching-style responses
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Run locally
+1) Install deps: `npm install`
+2) Create `.env.local` with Clerk + ElevenLabs + Gemini keys
+3) Start dev server: `npm run dev`
